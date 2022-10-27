@@ -25,7 +25,7 @@ class TreeNode():
  
 # Implementation based on: https://blog.boot.dev/computer-science/binary-search-tree-in-python/       
 class BinarySearchTree():
-    def __init__(self, root, limit = None):
+    def __init__(self, root = None, limit = None):
         self.__root = root
         self.__limit = limit
         
@@ -68,10 +68,10 @@ class BinarySearchTree():
         if value < root.get_value():
             if root.get_node('l') == None:
                 return False
-            return self.root.get_node('l').search(root.get_node('l'), value)
+            return root.get_node('l').search(root.get_node('l'), value)
         if root.get_node('r') == None:
             return False
-        return self.get_node('r').search(root.get_node('r'), value)
+        return root.get_node('r').search(root.get_node('r'), value)
     
     def insert(self, root, value):
         if not root.get_value():
@@ -86,39 +86,61 @@ class BinarySearchTree():
                 root.get_node('l').insert(root, value)
                 return
             left_node = TreeNode(value)
-            root.get_node('l').set_nodes(l_node=left_node)
+            root.set_nodes(l_node=left_node)
             return
 
         if root.get_node('r'):
             root.get_node('r').insert(root, value)
             return
         right_node = TreeNode(value)
-        root.get_node('r').set_nodes(r_node=right_node)
+        root.set_nodes(r_node=right_node)
         return
     
     def delete(self, root, value):
         if root == None:
             return root
-        if value < root.get_value():
-            root.get_node('l') = self.left.delete(value)
+        if value < root.get_value(value):
+            if root.get_node('l'):
+                root.set_nodes(l_node = root.get_node('l').delete(value))
             return self
-        if value > self.value:
-            self.right = self.right.delete(value)
+        if value > root.get_value(value):
+            if root.get_node('r'):
+                root.set_nodes(r_node = root.get_node('r').delete(value))
             return self
-        if self.right == None:
-            return self.left
-        if self.left == None:
-            return self.right
-        min_larger_node = self.right
-        while min_larger_node.left:
-            min_larger_node = min_larger_node.left
-        self.value = min_larger_node.value
-        self.right = self.right.delete(min_larger_node.value)
+        if root.get_node('r') == None:
+            return root.get_node('l')
+        if root.get_node('l') == None:
+            return root.get_node('r')
+        min_larger_node = root.get_node('r')
+        while min_larger_node.get_node('l'):
+            min_larger_node = min_larger_node.get_node('l')
+        root.set_value(min_larger_node.get_value())
+        root.set_node(r_node = root.get_node('r').delete(min_larger_node.get_value()))
         return self
     
-    def traverse():
-        pass
+    def traverse(self, root, values):
+        if root.get_node('l') is not None:
+            root.get_node('l').traverse(root.get_node('l'), values)
+        if root.get_value() is not None:
+            values.append(root.get_value())
+        if root.get_node('r') is not None:
+            root.get_node('r').traverse(root.get_node('r'), values)
+        return values
     
     def print_tree():
         pass       
+    
+    
+from random import randint
+def random_tree(n):
+    for i in range(n):
+        rand_int = randint(1,1000)
+        if i == 0:
+            tree_node = TreeNode(rand_int)
+            bst = BinarySearchTree(root = tree_node)
+        else:
+            bst.insert(bst.get_root(),rand_int)
+            
+print(random_tree(9))
         
+            
