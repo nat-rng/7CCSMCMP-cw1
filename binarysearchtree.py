@@ -1,146 +1,170 @@
-class TreeNode():
-    def __init__(self, value = None):
-        self.__value = value
-        self.__l_node = None
-        self.__r_node = None
-        
-    def get_value(self):   
-        return self.__value
-    
-    def get_node(self, node):
-        node = node.lower()
-        if node == "right" or node == "r":
-            return self.__r_node
-        elif node == "left" or node == "l":
-            return self.__l_node
+# Implementationo for BST from https://github.com/pagekeytech/education/blob/master/BST/bst.py
+class TreeNode(object):
+	def __init__(self, d):
+		self.data = d
+		self.left = None
+		self.right = None
+	def insert(self, d):
+		if self.data == d:
+			return False
+		elif d < self.data:
+			if self.left:
+				return self.left.insert(d)
+			else:
+				self.left = TreeNode(d)
+				return True
+		else:
+			if self.right:
+				return self.right.insert(d)
+			else:
+				self.right = TreeNode(d)
+				return True
+	def search(self, d):
+		if self.data == d:
+			return True
+		elif d < self.data and self.left:
+			return self.left.search(d)
+		elif d > self.data and self.right:
+			return self.right.search(d)
+		return False
+	# def preorder(self, l):
+	# 	l.append(self.data)
+	# 	if self.left:
+	# 		self.left.preorder(l)
+	# 	if self.right:
+	# 		self.right.preorder(l)
+	# 	return l
+	# def postorder(self, l):
+	# 	if self.left:
+	# 		self.left.postorder(l)
+	# 	if self.right:
+	# 		self.right.postorder(l)
+	# 	l.append(self.data)
+	# 	return l
+	def traverse(self, l):
+		if self.left:
+			self.left.traverse(l)
+		l.append(self.data)
+		if self.right:
+			self.right.traverse(l)
+		return l
+		
+class BinarySearchTree(object):
+    def __init__(self):
+        self.root = None
+    # return True if successfully inserted, false if exists
+    def insert(self, d):
+        if self.root:
+            return self.root.insert(d)
         else:
-            raise NameError("'{}' unknown node, must be either '(l)eft' or '(r)ight'".format(node))
-        
-    def set_value(self, value):
-        self.__value = value
-
-    def set_nodes(self, l_node = None, r_node = None):
-        self.__l_node = l_node
-        self.__r_node = r_node
- 
-# Implementation based on: https://blog.boot.dev/computer-science/binary-search-tree-in-python/       
-class BinarySearchTree():
-    def __init__(self, root = None, limit = None):
-        self.__root = root
-        self.__limit = limit
-        
-    def get_root(self):
-        return self.__root
-
-    def get_limit(self):
-        try:
-            if self.__limit == None:
-                return self.__limit
-            elif isinstance(self.__limit, int):
-                return self.__limit
-        except ValueError as e:
-            print(e)
-            
-    def set_root(self, root):
-        self.__root = root
-    
-    def set_limit(self, limit):
-        try:
-            if isinstance(self.__limit, int):
-                self.__limit = limit
-        except TypeError as e:
-            print(e)
-        
-    def is_empty(self):
-        if self.__root is None:
+            self.root = TreeNode(d)
             return True
-        
-    def is_full(self, root):
-        if root.get_node('r') is None and root.get_node('l') is None:
-            return True
-        if root.get_node('r') is not None and root.get_node('l') is not None:
-            return (self.is_full(root.get_node('r')) and self.is_full(root.get_node('l')))
-        return False
-    
-    def search(self, root, value):
-        if value == root.get_value():
-            return True
-        if value < root.get_value():
-            if root.get_node('l') == None:
-                return False
-            return root.get_node('l').search(root.get_node('l'), value)
-        if root.get_node('r') == None:
+    # return True if d is found in tree, false otherwise
+    def search(self, d):
+        if self.root:
+            return self.root.search(d)
+        else:
             return False
-        return root.get_node('r').search(root.get_node('r'), value)
-    
-    def insert(self, root, value):
-        if not root.get_value():
-            root.set_value(value)
-            return
-
-        if root.get_value() == value:
-            return
-
-        if value < root.get_value():
-            if root.get_node('l'):
-                root.get_node('l').insert(root, value)
-                return
-            left_node = TreeNode(value)
-            root.set_nodes(l_node=left_node)
-            return
-
-        if root.get_node('r'):
-            root.get_node('r').insert(root, value)
-            return
-        right_node = TreeNode(value)
-        root.set_nodes(r_node=right_node)
-        return
-    
-    def delete(self, root, value):
-        if root == None:
-            return root
-        if value < root.get_value(value):
-            if root.get_node('l'):
-                root.set_nodes(l_node = root.get_node('l').delete(value))
-            return self
-        if value > root.get_value(value):
-            if root.get_node('r'):
-                root.set_nodes(r_node = root.get_node('r').delete(value))
-            return self
-        if root.get_node('r') == None:
-            return root.get_node('l')
-        if root.get_node('l') == None:
-            return root.get_node('r')
-        min_larger_node = root.get_node('r')
-        while min_larger_node.get_node('l'):
-            min_larger_node = min_larger_node.get_node('l')
-        root.set_value(min_larger_node.get_value())
-        root.set_node(r_node = root.get_node('r').delete(min_larger_node.get_value()))
-        return self
-    
-    def traverse(self, root, values):
-        if root.get_node('l') is not None:
-            root.get_node('l').traverse(root.get_node('l'), values)
-        if root.get_value() is not None:
-            values.append(root.get_value())
-        if root.get_node('r') is not None:
-            root.get_node('r').traverse(root.get_node('r'), values)
-        return values
-    
-    def print_tree():
-        pass       
-    
-    
-from random import randint
-def random_tree(n):
-    for i in range(n):
-        rand_int = randint(1,1000)
-        if i == 0:
-            tree_node = TreeNode(rand_int)
-            bst = BinarySearchTree(root = tree_node)
-        else:
-            bst.insert(bst.get_root(),rand_int)
-            
-print(random_tree(9))
+    # return True if node successfully removed, False if not removed
+    def delete(self, d):
+        # Case 1: Empty Tree?
+        if self.root == None:
+            return False
         
-            
+        # Case 2: Deleting root node
+        if self.root.data == d:
+            # Case 2.1: Root node has no children
+            if self.root.left is None and self.root.right is None:
+                self.root = None
+                return True
+            # Case 2.2: Root node has left child
+            elif self.root.left and self.root.right is None:
+                self.root = self.root.left
+                return True
+            # Case 2.3: Root node has right child
+            elif self.root.left is None and self.root.right:
+                self.root = self.root.right
+                return True
+            # Case 2.4: Root node has two children
+            else:
+                moveNode = self.root.right
+                moveNodeParent = None
+                while moveNode.left:
+                    moveNodeParent = moveNode
+                    moveNode = moveNode.left
+                self.root.data = moveNode.data
+                if moveNode.data < moveNodeParent.data:
+                    moveNodeParent.left = None
+                else:
+                    moveNodeParent.right = None
+                return True		
+        # Find node to remove
+        parent = None
+        node = self.root
+        while node and node.data != d:
+            parent = node
+            if d < node.data:
+                node = node.left
+            elif d > node.data:
+                node = node.right
+        # Case 3: Node not found
+        if node == None or node.data != d:
+            return False
+        # Case 4: Node has no children
+        elif node.left is None and node.right is None:
+            if d < parent.data:
+                parent.left = None
+            else:
+                parent.right = None
+            return True
+        # Case 5: Node has left child only
+        elif node.left and node.right is None:
+            if d < parent.data:
+                parent.left = node.left
+            else:
+                parent.right = node.left
+            return True
+        # Case 6: Node has right child only
+        elif node.left is None and node.right:
+            if d < parent.data:
+                parent.left = node.right
+            else:
+                parent.right = node.right
+            return True
+        # Case 7: Node has left and right child
+        else:
+            moveNodeParent = node
+            moveNode = node.right
+            while moveNode.left:
+                moveNodeParent = moveNode
+                moveNode = moveNode.left
+            node.data = moveNode.data
+            if moveNode.right:
+                if moveNode.data < moveNodeParent.data:
+                    moveNodeParent.left = moveNode.right
+                else:
+                    moveNodeParent.right = moveNode.right
+            else:
+                if moveNode.data < moveNodeParent.data:
+                    moveNodeParent.left = None
+                else:
+                    moveNodeParent.right = None
+            return True
+    # # return list of data elements resulting from preorder tree traversal
+    # def preorder(self):
+    # 	if self.root:
+    # 		return self.root.preorder([])
+    # 	else:
+    # 		return []
+    # # return list of postorder elements
+    # def postorder(self):
+    # 	if self.root:
+    # 		return self.root.postorder([])
+    # 	else:
+    # 		return []
+    # return list of inorder elements
+    def traverse(self):
+        if self.root:
+            return self.root.traverse([])
+        else:
+            return []

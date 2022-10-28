@@ -148,7 +148,7 @@ def enter_str_val(val_type):
             if isinstance(float(val),float) == True:
                 print("Material must be a string value.")
                 return(enter_str_val(val_type))
-        except TypeError:
+        except ValueError:
             return val
     elif val_type.lower() == 'os':
         val = str(input("Enter mobile phone operating system: "))
@@ -165,7 +165,7 @@ def enter_numerical_val(val_type):
                 print("Prices cannot be negative.")
                 return(enter_numerical_val(val_type))
             return price
-        except TypeError:
+        except ValueError:
             print("Price must be a numerical value.")
             return(enter_numerical_val(val_type))
     elif val_type.lower() == "quantity":
@@ -175,7 +175,7 @@ def enter_numerical_val(val_type):
                 print("Quantity cannot be less than 1. Try again.")
                 return(enter_numerical_val(val_type))
             return quantity
-        except TypeError:
+        except ValueError:
             print("Quantity must be an integer value. Try again.")
             return(enter_numerical_val(val_type))
     elif val_type.lower() == 'size':
@@ -185,7 +185,7 @@ def enter_numerical_val(val_type):
                 print("Size cannot be negative.")
                 return(enter_numerical_val(val_type))
             return screen_size
-        except TypeError:
+        except ValueError:
             print("Item size must be an integer value.")
             return(enter_numerical_val(val_type))
     elif val_type.lower() == "screen size":
@@ -195,7 +195,7 @@ def enter_numerical_val(val_type):
                 print("Screen size cannot be negative.")
                 return(enter_numerical_val(val_type))
             return screen_size
-        except TypeError:
+        except ValueError:
             print("Screen size must be a floating point value.")
             return(enter_numerical_val(val_type))
 
@@ -205,7 +205,7 @@ def enter_datetime_val(val_type):
             expiry_date = str(input("Enter item expiry date (dd/mm/yyyy): "))
             datetime.strptime(expiry_date, '%d/%m/%Y')
             return expiry_date
-        except TypeError:
+        except ValueError:
             print("Invalid date format, please try again")
             return(enter_datetime_val(val_type))
     elif val_type.lower() == "model year":
@@ -213,7 +213,7 @@ def enter_datetime_val(val_type):
             model_year = str(input("Enter item expiry date (yyyy): "))
             datetime.strptime(model_year, '%Y')
             return model_year
-        except TypeError:
+        except ValueError:
             print("Invalid date format, please try again")
             return(enter_datetime_val(val_type))
 
@@ -223,7 +223,7 @@ def enter_boolean_value(val_type):
             gluten_free_str = str(input("Is the item gluten free? (Y/N): "))
             gluten_free = bool_yes_no(gluten_free_str)
             return gluten_free
-        except TypeError as e:
+        except ValueError as e:
             print(e)
             return(enter_boolean_value(val_type))
     elif val_type.lower() == "check vegan":
@@ -231,7 +231,7 @@ def enter_boolean_value(val_type):
             suitable_for_vegans_str = str(input("Is the item suitable for Vegans? (Y/N): "))
             suitable_for_vegans = bool_yes_no(suitable_for_vegans_str)
             return suitable_for_vegans
-        except TypeError as e:
+        except ValueError as e:
             print(e)
             return(enter_boolean_value(val_type))
 
@@ -241,7 +241,7 @@ def bool_yes_no(yn):
     elif yn.lower() == "n" or yn.lower() == "no":
         return False
     else:
-        raise TypeError("Invalid input, must be Yes/Y or No/N.")
+        raise ValueError("Invalid input, must be Yes/Y or No/N.")
 
 def command_r(shopping_cart):
     if bool(shopping_cart.get_contents()) == False:

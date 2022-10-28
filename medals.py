@@ -1,4 +1,3 @@
-import operator
 import json
 import csv
 import os
