@@ -105,7 +105,7 @@ class BinarySearchTree():
         if self.__root is None:
             return True
         return False
-
+    
     def is_full(self):
         if self.__limit == len(self.traverse()):
             return True
@@ -120,7 +120,7 @@ class BinarySearchTree():
         else:
             self.__root = TreeNode(data)
             return True
-    # return True if d is found in tree, false otherwise
+    # return True if data is found in tree, false otherwise
     def search(self, data):
         if self.__root:
             return self.__root.search(data)

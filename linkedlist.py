@@ -16,8 +16,6 @@ class ListNode:
     def set_next(self, node):
         self.__next = node
         
-    def print_val(self):
-        print(self.__data)
         
 class LinkedList:
     def __init__(self):
@@ -47,6 +45,8 @@ class LinkedList:
         return False
     # Adds new node containing 'data' to the end of the linked list.
     def insert(self, data):
+        if self.is_full():
+            return
         new_node = ListNode(data)
         cur = self.__head
         while cur.get_next() != None:
@@ -72,19 +72,6 @@ class LinkedList:
     
     def __str__(self):
         return str(self.traverse())
-
-    # Returns the value of the node at 'index'. 
-    def get(self, index):
-        if index >= self.length() or index<0: # added 'index<0' post-video
-            print("ERROR: 'Get' Index out of range!")
-            return None
-        cur_idx = 0
-        cur_node = self.__head
-        while True:
-            cur_node = cur_node.get_next()
-            if cur_idx == index: 
-                return cur_node.get_data()
-            cur_idx += 1
     
     def search(self, value):
         # Initialize current to head
@@ -105,24 +92,3 @@ class LinkedList:
             if cur_node.get_data() == value:
                 last_node.set_next(cur_node.get_next())
                 return
-    
-    # Allows for bracket operator syntax (i.e. a[0] to return first item).
-    def __getitem__(self, index):
-        return self.get(index)
-
-    # Sets the data at index 'index' equal to 'data'.
-    # Indices begin at 0. If the 'index' is greater than or equal 
-    # to the length of the linked list a warning will be printed 
-    # to the user.
-    def set(self, index, data):
-        if index >= self.length() or index < 0:
-            print("ERROR: 'Set' Index out of range!")
-            return
-        cur_node = self.__head
-        cur_idx = 0
-        while True:
-            cur_node = cur_node.get_next()
-            if cur_idx == index: 
-                cur_node.set_data(data)
-                return
-            cur_idx+=1
