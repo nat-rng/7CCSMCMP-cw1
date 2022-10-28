@@ -1,5 +1,5 @@
 # Implementationo for BST from https://github.com/pagekeytech/education/blob/master/BST/bst.py
-class TreeNode(object):
+class TreeNode():
     def __init__(self, data):
         self.__data = data
         self.__left = None
@@ -84,12 +84,38 @@ class TreeNode(object):
                 lines.append(line)
         return "\n".join(lines) 
 
-class BinarySearchTree(object):
+class BinarySearchTree():
     def __init__(self):
         self.__root = None
-    # return True if successfully inserted, false if exists
+        self.__limit = None
+        
+    def get_root(self):
+        return self.__root
+    
+    def get_limit(self):
+        return self.__limit
+    
+    def set_root(self, node):
+        self.__root = node
+    
+    def get_limit(self, value):
+        self.__limit == value
+    
+    def is_empty(self):
+        if self.__root is None:
+            return True
+        return False
+
+    def is_full(self):
+        if self.__limit == len(self.traverse()):
+            return True
+        return False
+    
+    # return True if successfully inserted, false if full or exists
     def insert(self, data):
-        if self.__root:
+        if self.is_full():
+            return False
+        elif self.__root:
             return self.__root.insert(data)
         else:
             self.__root = TreeNode(data)
@@ -103,7 +129,7 @@ class BinarySearchTree(object):
     # return True if node successfully removed, False if not removed
     def delete(self, data):
         # Case 1: Empty Tree?
-        if self.__root is None:
+        if self.is_empty():
             return False
         
         # Case 2: Deleting root node
