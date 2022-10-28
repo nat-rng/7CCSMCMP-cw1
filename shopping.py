@@ -9,15 +9,29 @@ item_types = {'clothing', 'food', 'mobile phone'}
 
 class Product():
     def __init__(self, name, price, quantity, unique_id, brand):
-        self.name = name
-        self.price = price
-        self.quantity = quantity
-        self.unique_id = unique_id
-        self.brand = brand
+        self.__name = name
+        self.__price = price
+        self.__quantity = quantity
+        self.__unique_id = unique_id
+        self.__brand = brand
         
     def to_json(self):
-        json_object = json.dumps(self.__dict__)
+        json_dict = {"name": self.__name, "price": self.__price, "quantity": self.__quantity, 
+                     "unique_id": self.__unique_id, "brand": self.__brand}
+        json_object = json.dumps(json_dict)
         return json_object
+    
+    def get_name(self):
+        return self.__name
+    
+    def get_price(self):
+        return self.__price
+    
+    def get_quantity(self):
+        return self.__quantity
+    
+    def get_unique_id(self):
+        return self.__unique_id
 
 class Clothing(Product):
     def __init__(self, 
@@ -25,8 +39,15 @@ class Clothing(Product):
                 size, material
                 ):
         super().__init__(name, price, quantity, unique_id, brand)
-        self.size = size
-        self.material = material
+        self.__size = size
+        self.__material = material
+        
+    def to_json(self):
+        json_dict = {"name": self.__name, "price": self.__price, "quantity": self.__quantity, 
+                     "unique_id": self.__unique_id, "brand": self.__brand, "size": self.__size,
+                     "material": self.__material}
+        json_object = json.dumps(json_dict)
+        return json_object
         
 class Food(Product):
     def __init__(self, 
@@ -34,19 +55,31 @@ class Food(Product):
                 expiry_date, gluten_free, suitable_for_vegans
                 ):
         super().__init__(name, price, quantity, unique_id, brand)
-        self.expiry_date = expiry_date
-        self.gluten_free = gluten_free 
-        self.suitable_for_vegans = suitable_for_vegans
-
+        self.__expiry_date = expiry_date
+        self.__gluten_free = gluten_free 
+        self.__suitable_for_vegans = suitable_for_vegans
+        
+    def to_json(self):
+        json_dict = {"name": self.__name, "price": self.__price, "quantity": self.__quantity, 
+                     "unique_id": self.__unique_id, "brand": self.__brand, "expiry_date": self.__expiry_date,
+                     "gluten_free": self.__gluten_free, "suitable_for_vegans": self.__suitable_for_vegans}
+        json_object = json.dumps(json_dict)
+        return json_object
+    
 class MobilePhone(Product):
     def __init__(self, 
             name, price, quantity, unique_id, brand,
             os, model_year, screen_size
             ):
         super().__init__(name, price, quantity, unique_id, brand)
-        self.os = os
-        self.model_year = model_year
-        self.screen_size = screen_size
+        self.__os = os
+        self.__model_year = model_year
+        self.__screen_size = screen_size
+        
+    def to_json(self):
+        json_dict = {"name": self.__name, "price": self.__price, "quantity": self.__quantity, 
+                     "unique_id": self.__unique_id, "brand": self.__brand, "os": self.__os, 
+                     "model_year": self.__model_year, "screen_size": self.__screen_size}
 
 class ShoppingCart():
     def __init__(self):
@@ -59,10 +92,10 @@ class ShoppingCart():
         self.__my_cart = list(filter(lambda products: products != p, self.__my_cart))
         
     def get_contents(self):
-        return sorted(self.__my_cart, key=lambda item: item.name)
+        return sorted(self.__my_cart, key=lambda item: item.get_name())
 
     def change_product_quantity(self, p, q):
-        p.quantity = q
+        p.set_quantity(q)
 
 def enter_ean_id():
     try:
@@ -96,7 +129,7 @@ def generate_id():
     return unique_id
     
 def command_a(shopping_cart):
-    print("Adding a new product to the shopping cart...")
+    print("\nAdding a new product to the shopping cart...")
     item_type = str(input("Enter item type: "))
     if item_type not in item_types:
         print("Product type not found. Try Again.")
@@ -272,10 +305,10 @@ def command_s(shopping_cart):
         for i in shopping_cart.get_contents():
             items += 1
             if i.quantity > 1:
-                print("\t" + str(items) + " - " + str(i.quantity) + " x " + str(i.name) + " = £" + str("{:.2f}".format(round(i.quantity*i.price,2))) + " - Item ID: " + i.unique_id)
+                print("\t" + str(items) + " - " + str(i.get_quantity()) + " x " + str(i.get_name()) + " = £" + str("{:.2f}".format(round(i.get_quantity()*i.get_price(),2))) + " - Item ID: " + i.unique_id())
             else:
-                print("\t" + str(items) + " - " + str(i.name) + " = £" + str("{:.2f}".format(round(i.quantity*i.price,2))) + " - Item ID: " + i.unique_id)
-            total_price += round(i.quantity*i.price,2)
+                print("\t" + str(items) + " - " + str(i.get_name()) + " = £" + str("{:.2f}".format(round(i.get_quantity()*i.get_price(),2))) + " - Item ID: " + i.get_unique_id())
+            total_price += round(i.get_quantity()*i.get_quantity(),2)
         print("\tTotal Price = £" + str("{:.2f}".format(total_price)))
     else:
         print("\nShopping Cart is Empty.")
@@ -287,13 +320,13 @@ def command_q(shopping_cart):
         change_id = str(input("Input product ID to change: "))
         if change_id in unique_ids:
             for i in shopping_cart.get_contents():
-                if i.unique_id == change_id:
+                if i.get_unique() == change_id:
                         change_item_quant(shopping_cart, i, change_id)
         else:
             print("\nInvalid product ID, please double check and try again.")
 
 def change_item_quant(shopping_cart, item, change_id):
-    og_quantity = str(item.quantity)
+    og_quantity = int(item.get_quantity())
     print("\nCurrent number of this item in cart: " + og_quantity)
     try:
         quantity = int(input("Please enter the desired quantity: "))
@@ -333,7 +366,7 @@ def command_e(shopping_cart):
             key = "item" + str(item_no)
             item_dict = {key: json.loads(i.to_json())}
             shopping_cart_dict["shopping_cart"].append(item_dict)
-            total_price += round(i.quantity*i.price,2)
+            total_price += round(i.get_quantity()*i.price,2)
         shopping_cart_dict["total_price"]  = total_price
         shopping_cart_json = json.dumps(shopping_cart_dict, indent=1)
         print(shopping_cart_json)
