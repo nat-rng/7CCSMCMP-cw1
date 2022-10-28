@@ -1,10 +1,11 @@
-# Reference Implementationo for BST from https://github.com/pagekeytech/education/blob/master/BST/bst.py
+# Reference Implementation for BST from https://github.com/pagekeytech/education/blob/master/BST/bst.py
 class TreeNode():
     def __init__(self, data):
         self.__data = data
         self.__left = None
         self.__right = None
 
+    #setter and getting methods to access attributees of the Tree Node Class
     def get_data(self):
         return self.__data
     
@@ -23,6 +24,7 @@ class TreeNode():
     def set_right(self, right_node):
         self.__right = right_node
     
+    #Reecusive implementation of insert method
     def insert(self, data):
         if self.__data == data:
             return False
@@ -39,6 +41,7 @@ class TreeNode():
                 self.__right = TreeNode(data)
                 return True
 
+    #recursive implementation of search method
     def search(self, data):
         if self.__data == data:
             return True
@@ -48,6 +51,7 @@ class TreeNode():
             return self.__right.search(data)
         return False
 
+    #recursive implementation of inorder traversal meethod
     def traverse(self, inorder_list):
         if self.__left:
             self.__left.traverse(inorder_list)
@@ -88,7 +92,8 @@ class BinarySearchTree():
     def __init__(self):
         self.__root = None
         self.__limit = None
-        
+    
+    #setter and getter methodos to access variables of the BST class    
     def get_root(self):
         return self.__root
     
@@ -104,6 +109,7 @@ class BinarySearchTree():
     def get_size(self, value):
         self.__size = value
     
+    #check if the tree is empty or fuull relative to the limit
     def is_empty(self):
         if self.__root is None:
             return True
@@ -123,6 +129,7 @@ class BinarySearchTree():
         else:
             self.__root = TreeNode(data)
             return True
+        
     # return True if data is found in tree, false otherwise
     def search(self, data):
         if self.__root:
