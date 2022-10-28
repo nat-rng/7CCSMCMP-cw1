@@ -1,3 +1,4 @@
+from curses.ascii import isdigit
 import random
 import json
 from datetime import datetime
@@ -64,22 +65,26 @@ class ShoppingCart():
         p.quantity = q
 
 def enter_ean_id():
-    input_unique_id = input("Enter 13 digit EAN code: ")
-    if input_unique_id.lower() == 'gen id':
-       input_unique_id = generate_id()
-       return input_unique_id
-    elif input_unique_id in unique_ids:
-        print("Duplicate ID! A random one has been generated for you.")
-        input_unique_id = generate_id()
-        return input_unique_id
-    elif len(str(input_unique_id)) != 13:
-        print("EAN code must be 13 digits. Please try again (or enter 'gen id' to generate it).")
-        return(enter_ean_id())
-    elif isinstance(input_unique_id, int) == False or input_unique_id < 0:
+    try:
+        input_unique_id = input("Enter 13 digit EAN code: ")
+        if input_unique_id.lower() == 'gen id':
+            input_unique_id = generate_id()
+            return input_unique_id
+        elif input_unique_id in unique_ids:
+            print("Duplicate ID! A random one has been generated for you.")
+            input_unique_id = generate_id()
+            return input_unique_id
+        elif len(str(input_unique_id)) != 13:
+            print("EAN code must be 13 digits. Please try again (or enter 'gen id' to generate it).")
+            return(enter_ean_id())
+        elif input_unique_id.isdigit() == False or int(input_unique_id) < 0:
+            print("EAN code must consist of digits between [0,9]. Please try again (or enter 'gen id' to generate it).")
+            return(enter_ean_id())
+        else:
+            return str(input_unique_id)
+    except TypeError:
         print("EAN code must consist of digits between [0,9]. Please try again (or enter 'gen id' to generate it).")
         return(enter_ean_id())
-    else:
-        return str(input_unique_id)
 
 def generate_id():
     unique_id = ''
@@ -91,6 +96,7 @@ def generate_id():
     return unique_id
     
 def command_a(shopping_cart):
+    print("Adding a new product to the shopping cart...")
     item_type = str(input("Enter item type: "))
     if item_type not in item_types:
         print("Product type not found. Try Again.")
@@ -180,17 +186,17 @@ def enter_numerical_val(val_type):
             return(enter_numerical_val(val_type))
     elif val_type.lower() == 'size':
         try:
-            screen_size = int(input("Enter item size as an integer: "))
-            if screen_size < 0:
+            size = int(input("Enter item size as an integer: "))
+            if size < 0:
                 print("Size cannot be negative.")
                 return(enter_numerical_val(val_type))
-            return screen_size
+            return size
         except ValueError:
             print("Item size must be an integer value.")
             return(enter_numerical_val(val_type))
     elif val_type.lower() == "screen size":
         try:
-            screen_size = str(input("Enter screen size in inches: "))
+            screen_size = float(input("Enter screen size in inches: "))
             if screen_size < 0:
                 print("Screen size cannot be negative.")
                 return(enter_numerical_val(val_type))
@@ -210,7 +216,7 @@ def enter_datetime_val(val_type):
             return(enter_datetime_val(val_type))
     elif val_type.lower() == "model year":
         try:
-            model_year = str(input("Enter item expiry date (yyyy): "))
+            model_year = str(input("Enter item model year (yyyy): "))
             datetime.strptime(model_year, '%Y')
             return model_year
         except ValueError:
@@ -289,28 +295,31 @@ def command_q(shopping_cart):
 def change_item_quant(shopping_cart, item, change_id):
     og_quantity = str(item.quantity)
     print("\nCurrent number of this item in cart: " + og_quantity)
-    quantity = int(input("Please enter the desired quantity: "))
-    if isinstance(quantity, int) == False:
-        print("Input must be an integer, please try again")
-        change_item_quant(shopping_cart, item, change_id)
-    elif quantity == 0:
-        print("\nYou are about to delete this item from the cart. Are you sure you want to continue?")
-        decision = input("\nType 'Y' to Proceed or 'N' to Cancel: ")
-        if decision.lower() == "y":
-            unique_ids.remove(change_id)
-            shopping_cart.remove_product(item)
-            print("\nItem Deleted.")
-        elif decision.lower() != "n":
-            print("\nInvalid input, please try again.")
+    try:
+        quantity = int(input("Please enter the desired quantity: "))
+        if quantity == og_quantity:
+            print("Quantity unchanged.")
+        elif quantity == 0:
+            print("\nYou are about to delete this item from the cart. Are you sure you want to continue?")
+            decision = input("\nType 'Y' to Proceed or 'N' to Cancel: ")
+            if decision.lower() == "y":
+                unique_ids.remove(change_id)
+                shopping_cart.remove_product(item)
+                print("\nItem Deleted.")
+            elif decision.lower() != "n":
+                print("\nInvalid input, please try again.")
+                change_item_quant(shopping_cart, item, change_id)
+            else:
+                print("\nDeletion aborted.")
+        elif quantity < 0:
+            print("Quantity cannot be negative, please try again.")
             change_item_quant(shopping_cart, item, change_id)
         else:
-            print("\nDeletion aborted.")
-    elif quantity < 0:
-        print("Quantity cannot be negative, please try again.")
-        change_item_quant(shopping_cart, item, change_id)
-    else:
-        shopping_cart.change_product_quantity(item, quantity)
-        print("Quantity of {} changed from {} to {}".format(change_id, og_quantity, quantity))
+            shopping_cart.change_product_quantity(item, int(quantity))
+            print("Quantity of {} changed from {} to {}".format(change_id, og_quantity, quantity))
+    except ValueError:
+        print("Invalid input, input must be an interger. Please try again.")
+        change_item_quant(shopping_cart, item, change_id)    
      
 def command_e(shopping_cart):
     if bool(shopping_cart.get_contents()) == False:

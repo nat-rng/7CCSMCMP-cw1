@@ -1,4 +1,4 @@
-# Implementationo for BST from https://github.com/pagekeytech/education/blob/master/BST/bst.py
+# Reference Implementationo for BST from https://github.com/pagekeytech/education/blob/master/BST/bst.py
 class TreeNode():
     def __init__(self, data):
         self.__data = data
@@ -100,6 +100,9 @@ class BinarySearchTree():
     
     def get_limit(self, value):
         self.__limit == value
+    
+    def get_size(self, value):
+        self.__size = value
     
     def is_empty(self):
         if self.__root is None:
