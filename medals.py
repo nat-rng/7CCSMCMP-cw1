@@ -72,10 +72,6 @@ class CountryMedals():
                     comparisons.append(comparison)
         print("\nCompare {} and {}.".format(self.__name, country_2.get_name()))
         print(*comparisons, sep='\n')
-    
-# country1 = CountryMedals("Germany", 4, 3, 4)
-# country2 = CountryMedals("Italy", 2, 3, 1)
-# country1.compare(country2)
 
 countries = {}
 with open('medals.csv', 'r') as data:

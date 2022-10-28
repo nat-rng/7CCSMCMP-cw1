@@ -4,6 +4,7 @@ class TreeNode(object):
 		self.data = d
 		self.left = None
 		self.right = None
+  
 	def insert(self, d):
 		if self.data == d:
 			return False
@@ -19,6 +20,7 @@ class TreeNode(object):
 			else:
 				self.right = TreeNode(d)
 				return True
+
 	def search(self, d):
 		if self.data == d:
 			return True
@@ -27,20 +29,7 @@ class TreeNode(object):
 		elif d > self.data and self.right:
 			return self.right.search(d)
 		return False
-	# def preorder(self, l):
-	# 	l.append(self.data)
-	# 	if self.left:
-	# 		self.left.preorder(l)
-	# 	if self.right:
-	# 		self.right.preorder(l)
-	# 	return l
-	# def postorder(self, l):
-	# 	if self.left:
-	# 		self.left.postorder(l)
-	# 	if self.right:
-	# 		self.right.postorder(l)
-	# 	l.append(self.data)
-	# 	return l
+
 	def traverse(self, l):
 		if self.left:
 			self.left.traverse(l)
@@ -150,18 +139,7 @@ class BinarySearchTree(object):
                 else:
                     moveNodeParent.right = None
             return True
-    # # return list of data elements resulting from preorder tree traversal
-    # def preorder(self):
-    # 	if self.root:
-    # 		return self.root.preorder([])
-    # 	else:
-    # 		return []
-    # # return list of postorder elements
-    # def postorder(self):
-    # 	if self.root:
-    # 		return self.root.postorder([])
-    # 	else:
-    # 		return []
+
     # return list of inorder elements
     def traverse(self):
         if self.root:
