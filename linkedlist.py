@@ -37,7 +37,7 @@ class LinkedList:
         self.__limit = limit
         
     def is_empty(self):
-        if self.__head == None:
+        if self.__head is None:
             return True
         return False
 

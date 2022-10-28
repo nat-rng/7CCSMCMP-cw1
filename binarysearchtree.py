@@ -1,148 +1,199 @@
 # Implementationo for BST from https://github.com/pagekeytech/education/blob/master/BST/bst.py
 class TreeNode(object):
-	def __init__(self, d):
-		self.data = d
-		self.left = None
-		self.right = None
-  
-	def insert(self, d):
-		if self.data == d:
-			return False
-		elif d < self.data:
-			if self.left:
-				return self.left.insert(d)
-			else:
-				self.left = TreeNode(d)
-				return True
-		else:
-			if self.right:
-				return self.right.insert(d)
-			else:
-				self.right = TreeNode(d)
-				return True
+    def __init__(self, data):
+        self.__data = data
+        self.__left = None
+        self.__right = None
 
-	def search(self, d):
-		if self.data == d:
-			return True
-		elif d < self.data and self.left:
-			return self.left.search(d)
-		elif d > self.data and self.right:
-			return self.right.search(d)
-		return False
+    def get_data(self):
+        return self.__data
+    
+    def get_left(self):
+        return self.__left
+    
+    def get_right(self):
+        return self.__right
+    
+    def set_data(self, data):
+        self.__data = data
+        
+    def set_left(self, left_node):
+        self.__left = left_node
+        
+    def set_right(self, right_node):
+        self.__right = right_node
+    
+    def insert(self, data):
+        if self.__data == data:
+            return False
+        elif data < self.__data:
+            if self.__left:
+                return self.__left.insert(data)
+            else:
+                self.__left = TreeNode(data)
+                return True
+        else:
+            if self.__right:
+                return self.__right.insert(data)
+            else:
+                self.__right = TreeNode(data)
+                return True
 
-	def traverse(self, l):
-		if self.left:
-			self.left.traverse(l)
-		l.append(self.data)
-		if self.right:
-			self.right.traverse(l)
-		return l
-		
+    def search(self, data):
+        if self.__data == data:
+            return True
+        elif data < self.__data and self.__left:
+            return self.__left.search(data)
+        elif data > self.__data and self.__right:
+            return self.__right.search(data)
+        return False
+
+    def traverse(self, inorder_list):
+        if self.__left:
+            self.__left.traverse(inorder_list)
+        inorder_list.append(self.__data)
+        if self.__right:
+            self.__right.traverse(inorder_list)
+        return inorder_list
+    
+    ## represent implementation from https://stackoverflow.com/questions/62406562/how-to-print-a-binary-search-tree-in-python
+    def __repr__(self):
+        lines = []
+        if self.__right:
+            found = False
+            for line in repr(self.__right).split("\n"):
+                if line[0] != " ":
+                    found = True
+                    line = " ┌─" + line
+                elif found:
+                    line = " | " + line
+                else:
+                    line = "   " + line
+                lines.append(line)
+        lines.append(str(self.__data))
+        if self.__left:
+            found = False
+            for line in repr(self.__left).split("\n"):
+                if line[0] != " ":
+                    found = True
+                    line = " └─" + line
+                elif found:
+                    line = "   " + line
+                else:
+                    line = " | " + line
+                lines.append(line)
+        return "\n".join(lines) 
+
 class BinarySearchTree(object):
     def __init__(self):
-        self.root = None
+        self.__root = None
     # return True if successfully inserted, false if exists
-    def insert(self, d):
-        if self.root:
-            return self.root.insert(d)
+    def insert(self, data):
+        if self.__root:
+            return self.__root.insert(data)
         else:
-            self.root = TreeNode(d)
+            self.__root = TreeNode(data)
             return True
     # return True if d is found in tree, false otherwise
-    def search(self, d):
-        if self.root:
-            return self.root.search(d)
+    def search(self, data):
+        if self.__root:
+            return self.__root.search(data)
         else:
             return False
     # return True if node successfully removed, False if not removed
-    def delete(self, d):
+    def delete(self, data):
         # Case 1: Empty Tree?
-        if self.root == None:
+        if self.__root is None:
             return False
         
         # Case 2: Deleting root node
-        if self.root.data == d:
+        if self.__root.get_data() == data:
             # Case 2.1: Root node has no children
-            if self.root.left is None and self.root.right is None:
-                self.root = None
+            if self.__root.get_left() is None and self.__root.get_right() is None:
+                self.__root = None
                 return True
             # Case 2.2: Root node has left child
-            elif self.root.left and self.root.right is None:
-                self.root = self.root.left
+            elif self.__root.get_left() and self.__root.get_right() is None:
+                self.__root = self.__root.get_left()
                 return True
             # Case 2.3: Root node has right child
-            elif self.root.left is None and self.root.right:
-                self.root = self.root.right
+            elif self.__root.get_left() is None and self.__root.get_right():
+                self.__root = self.__root.get_right()
                 return True
             # Case 2.4: Root node has two children
             else:
-                moveNode = self.root.right
+                moveNode = self.__root.get_right()
                 moveNodeParent = None
-                while moveNode.left:
+                while moveNode.get_left():
                     moveNodeParent = moveNode
-                    moveNode = moveNode.left
-                self.root.data = moveNode.data
-                if moveNode.data < moveNodeParent.data:
-                    moveNodeParent.left = None
+                    moveNode = moveNode.get_left()
+                self.__root.set_data(moveNode.get_data())
+                if moveNode.get_data() < moveNodeParent.get_data():
+                    moveNodeParent.set_left(None)
                 else:
-                    moveNodeParent.right = None
+                    moveNodeParent.set_right(None)
                 return True		
         # Find node to remove
         parent = None
-        node = self.root
-        while node and node.data != d:
+        node = self.__root
+        while node and node.get_data() != data:
             parent = node
-            if d < node.data:
-                node = node.left
-            elif d > node.data:
-                node = node.right
+            if data < node.get_data():
+                node = node.get_left()
+            elif data > node.get_data():
+                node = node.get_right()
         # Case 3: Node not found
-        if node == None or node.data != d:
+        if node is None or node.get_data() != data:
             return False
         # Case 4: Node has no children
-        elif node.left is None and node.right is None:
-            if d < parent.data:
-                parent.left = None
+        elif node.get_left() is None and node.get_right() is None:
+            if data < parent.get_data():
+                parent.set_left(None)
             else:
-                parent.right = None
+                parent.set_right(None)
             return True
         # Case 5: Node has left child only
-        elif node.left and node.right is None:
-            if d < parent.data:
-                parent.left = node.left
+        elif node.get_left() and node.get_right() is None:
+            if data < parent.get_data():
+                parent.set_left(node.get_left())
             else:
-                parent.right = node.left
+                parent.set_right(node.get_left())
             return True
         # Case 6: Node has right child only
-        elif node.left is None and node.right:
-            if d < parent.data:
-                parent.left = node.right
+        elif node.get_left() is None and node.get_right():
+            if data < parent.get_data():
+                parent.set_left(node.get_right())
             else:
-                parent.right = node.right
+                parent.set_right(node.get_right())
             return True
         # Case 7: Node has left and right child
         else:
             moveNodeParent = node
-            moveNode = node.right
-            while moveNode.left:
+            moveNode = node.get_right()
+            while moveNode.get_left():
                 moveNodeParent = moveNode
-                moveNode = moveNode.left
-            node.data = moveNode.data
-            if moveNode.right:
-                if moveNode.data < moveNodeParent.data:
-                    moveNodeParent.left = moveNode.right
+                moveNode = moveNode.get_left()
+            node.set_data(moveNode.get_data())
+            if moveNode.get_right():
+                if moveNode.get_data() < moveNodeParent.get_data():
+                    moveNodeParent.set_left(moveNode.get_right())
                 else:
-                    moveNodeParent.right = moveNode.right
+                    moveNodeParent.set_right(moveNode.get_right())
             else:
-                if moveNode.data < moveNodeParent.data:
-                    moveNodeParent.left = None
+                if moveNode.get_data() < moveNodeParent.get_data():
+                    moveNodeParent.set_left(None)
                 else:
-                    moveNodeParent.right = None
+                    moveNodeParent.set_right(None)
             return True
 
     # return list of inorder elements
     def traverse(self):
-        if self.root:
-            return self.root.traverse([])
+        if self.__root:
+            return self.__root.traverse([])
         else:
             return []
+    
+    ## represent implementation from https://stackoverflow.com/questions/62406562/how-to-print-a-binary-search-tree-in-python together with above __repr__ function
+    def print_tree(self):
+        print(self.__root)
+ 
