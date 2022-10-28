@@ -144,7 +144,7 @@ def read_medal_type():
     if input_medal_type.lower() == 'q' or input_medal_type.lower() == 'quit':
         return input_medal_type
     else:
-        if input_medal_type in medal_types:
+        if input_medal_type.lower() in medal_types:
             if input_medal_type == '':
                 print("Cannot be empty.")
                 return(read_medal_type())
@@ -188,10 +188,12 @@ def main():
                 selected_country.print_summary()
         #compare two countries ahd their medal counts
         elif user_input == 'c' or user_input == 'compare':
+            print("Enter the first country to compare to:")
             country_name1 = read_country_name()
             if country_name1.lower() == 'q' or country_name1.lower() == 'quit':
                 terminate = terminate_loop()
             else:
+                print("Enter the second country to compare to:")
                 country_name2 = read_country_name()
                 if country_name2.lower() == 'q' or country_name2.lower() == 'quit':
                     terminate = terminate_loop()

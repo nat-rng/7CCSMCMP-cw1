@@ -1,4 +1,3 @@
-from curses.ascii import isdigit
 import random
 import json
 from datetime import datetime
@@ -34,6 +33,9 @@ class Product():
     
     def get_unique_id(self):
         return self.__unique_id
+    
+    def get_brand(self):
+        return self.__brand
 
 class Clothing(Product):
     def __init__(self, 
@@ -46,8 +48,8 @@ class Clothing(Product):
         
     #Oterride the to_json method to include the size and material attributes
     def to_json(self):
-        json_dict = {"name": self.__name, "price": self.__price, "quantity": self.__quantity, 
-                     "unique_id": self.__unique_id, "brand": self.__brand, "size": self.__size,
+        json_dict = {"name": self.get_name(), "price": self.get_price(), "quantity": self.get_quantity(), 
+                     "unique_id": self.get_unique_id(), "brand": self.get_brand(), "size": self.__size,
                      "material": self.__material}
         json_object = json.dumps(json_dict)
         return json_object
@@ -64,8 +66,8 @@ class Food(Product):
 
     #Override the to_json method to include the expiry_date, gluten_free and suitable_for_vegans attributes
     def to_json(self):
-        json_dict = {"name": self.__name, "price": self.__price, "quantity": self.__quantity, 
-                     "unique_id": self.__unique_id, "brand": self.__brand, "expiry_date": self.__expiry_date,
+        json_dict = {"name": self.get_name(), "price": self.get_price(), "quantity": self.get_quantity(), 
+                     "unique_id": self.get_unique_id(), "brand": self.get_brand(), "expiry_date": self.__expiry_date,
                      "gluten_free": self.__gluten_free, "suitable_for_vegans": self.__suitable_for_vegans}
         json_object = json.dumps(json_dict)
         return json_object
@@ -82,9 +84,11 @@ class MobilePhone(Product):
     
     #Override the to_json method to include the os, model_year and screen_size attributes    
     def to_json(self):
-        json_dict = {"name": self.__name, "price": self.__price, "quantity": self.__quantity, 
-                     "unique_id": self.__unique_id, "brand": self.__brand, "os": self.__os, 
+        json_dict = {"name": self.get_name(), "price": self.get_price(), "quantity": self.get_quantity(), 
+                     "unique_id": self.get_unique_id(), "brand": self.get_brand(), "os": self.__os, 
                      "model_year": self.__model_year, "screen_size": self.__screen_size}
+        json_object = json.dumps(json_dict)
+        return json_object
 
 # Initialise shopping cart as empty list only accessible by this module via private variable setters  nd getters
 class ShoppingCart():
@@ -102,8 +106,6 @@ class ShoppingCart():
 
     def change_product_quantity(self, p, q):
         p.set_quantity(q)
-
-        p.quantity = q
 #Function to allows user to enter a unique EAN ID. Input is verified against the set of unique IDs; strings, floats and negative numbers are not allowed.
 #It has a built in recursion to allow the user to try again if they enter an invalid ID.
 #If the ID is valid, it is added to the set of unique IDs.
@@ -125,6 +127,7 @@ def enter_ean_id():
             print("EAN code must consist of digits between [0,9]. Please try again (or enter 'gen id' to generate it).")
             return(enter_ean_id())
         else:
+            unique_ids.add(input_unique_id)
             return str(input_unique_id)
     except TypeError:
         print("EAN code must consist of digits between [0,9]. Please try again (or enter 'gen id' to generate it).")
@@ -143,8 +146,8 @@ def generate_id():
 def command_a(shopping_cart):
     print("\nAdding a new product to the shopping cart...")
     item_type = str(input("Enter item type: "))
-    if item_type not in item_types:
-        print("Product type not found. Try Again.")
+    if item_type.lower() not in item_types:
+        print("Product type not found ('Clothin', 'Food' or 'Mobile Phone'). Try Again.")
         command_a(shopping_cart)
     else:
         enter_product_details(shopping_cart, item_type)
@@ -316,11 +319,11 @@ def command_s(shopping_cart):
         total_price = 0
         for i in shopping_cart.get_contents():
             items += 1
-            if i.quantity > 1:
-                print("\t" + str(items) + " - " + str(i.get_quantity()) + " x " + str(i.get_name()) + " = £" + str("{:.2f}".format(round(i.get_quantity()*i.get_price(),2))) + " - Item ID: " + i.unique_id())
+            if i.get_quantity() > 1:
+                print("\t" + str(items) + " - " + str(i.get_quantity()) + " x " + str(i.get_name()) + " = £" + str("{:.2f}".format(round(i.get_quantity()*i.get_price(),2))) + " - Item ID: " + i.get_unique_id())
             else:
                 print("\t" + str(items) + " - " + str(i.get_name()) + " = £" + str("{:.2f}".format(round(i.get_quantity()*i.get_price(),2))) + " - Item ID: " + i.get_unique_id())
-            total_price += round(i.get_quantity()*i.get_quantity(),2)
+            total_price += round(i.get_quantity()*i.get_price(),2)
         print("\tTotal Price = £" + str("{:.2f}".format(total_price)))
     else:
         print("\nShopping Cart is Empty.")
@@ -332,7 +335,7 @@ def command_q(shopping_cart):
         change_id = str(input("Input product ID to change: "))
         if change_id in unique_ids:
             for i in shopping_cart.get_contents():
-                if i.get_unique() == change_id:
+                if i.get_unique_id() == change_id:
                         change_item_quant(shopping_cart, i, change_id)
         else:
             print("\nInvalid product ID, please double check and try again.")
@@ -341,7 +344,7 @@ def command_q(shopping_cart):
 #If the new quantity is the same as the current quantity, a message is shown to the user
 def change_item_quant(shopping_cart, item, change_id):
     og_quantity = int(item.get_quantity())
-    print("\nCurrent number of this item in cart: " + og_quantity)
+    print("\nCurrent number of this item in cart: " + str(og_quantity))
     try:
         quantity = int(input("Please enter the desired quantity: "))
         if quantity == og_quantity:
@@ -380,7 +383,7 @@ def command_e(shopping_cart):
             key = "item" + str(item_no)
             item_dict = {key: json.loads(i.to_json())}
             shopping_cart_dict["shopping_cart"].append(item_dict)
-            total_price += round(i.get_quantity()*i.price,2)
+            total_price += round(i.get_quantity()*i.get_price(),2)
         shopping_cart_dict["total_price"]  = total_price
         shopping_cart_json = json.dumps(shopping_cart_dict, indent=1)
         print(shopping_cart_json)
