@@ -7,6 +7,7 @@ from datetime import datetime
 unique_ids = set()
 item_types = {'clothing', 'food', 'mobile phone'}
 
+## Superclass Product Object ##
 class Product():
     def __init__(self, name, price, quantity, unique_id, brand):
         self.name = name
@@ -18,7 +19,7 @@ class Product():
     def to_json(self):
         json_object = json.dumps(self.__dict__)
         return json_object
-
+## Clothing SubClass of Product Class ##
 class Clothing(Product):
     def __init__(self, 
                 name, price, quantity, unique_id, brand,
@@ -27,7 +28,7 @@ class Clothing(Product):
         super().__init__(name, price, quantity, unique_id, brand)
         self.size = size
         self.material = material
-        
+ ## Food SubClass of Product Class ##       
 class Food(Product):
     def __init__(self, 
                 name, price, quantity, unique_id, brand,
@@ -37,7 +38,7 @@ class Food(Product):
         self.expiry_date = expiry_date
         self.gluten_free = gluten_free 
         self.suitable_for_vegans = suitable_for_vegans
-
+## MobilePhone SubClass of Product Class ##
 class MobilePhone(Product):
     def __init__(self, 
             name, price, quantity, unique_id, brand,
@@ -48,6 +49,7 @@ class MobilePhone(Product):
         self.model_year = model_year
         self.screen_size = screen_size
 
+# Initialise shopping cart as empty list only accessible by this module via private variable setters  nd getters
 class ShoppingCart():
     def __init__(self):
         self.__my_cart = []
@@ -63,7 +65,10 @@ class ShoppingCart():
 
     def change_product_quantity(self, p, q):
         p.quantity = q
-
+#Function to allows user to enter a unique EAN ID. Input is verified against the set of unique IDs; strings, floats and negative numbers are not allowed.
+#It has a built in recursion to allow the user to try again if they enter an invalid ID.
+#If the ID is valid, it is added to the set of unique IDs.
+#Provides an option to auto generate an ID with input 'gen id'
 def enter_ean_id():
     try:
         input_unique_id = input("Enter 13 digit EAN code: ")
@@ -86,6 +91,7 @@ def enter_ean_id():
         print("EAN code must consist of digits between [0,9]. Please try again (or enter 'gen id' to generate it).")
         return(enter_ean_id())
 
+#function to auto generate a unique ID, generates a 13 digit number and checks if it is already in the set of unique IDs
 def generate_id():
     unique_id = ''
     for _ in range(13):
@@ -94,16 +100,16 @@ def generate_id():
         generate_id()
     unique_ids.add(unique_id)
     return unique_id
-    
+#Function to allow user to add a product to the shopping cart. User is prompted to enter the product type, name, brand, price, quantity and unique ID.    
 def command_a(shopping_cart):
-    print("Adding a new product to the shopping cart...")
+    print("\nAdding a new product to the shopping cart...")
     item_type = str(input("Enter item type: "))
     if item_type not in item_types:
         print("Product type not found. Try Again.")
         command_a(shopping_cart)
     else:
         enter_product_details(shopping_cart, item_type)
-
+# Helper function for the above to allow for recursion if the user enters an invalid value and stay at the currrent input prompt
 def enter_product_details(shopping_cart, item_type):
     name = enter_str_val("Name")
     price = enter_numerical_val("Price")
@@ -131,7 +137,7 @@ def enter_product_details(shopping_cart, item_type):
         shopping_cart.add_product(product)
     print("You added {} to the shopping cart".format(name))
     print("The cart contains {} products".format(len(shopping_cart.get_contents())))
-
+#Helper function to allow user to enter a string value. Input is verified to be a string and not empty.
 def enter_str_val(val_type):
     if val_type.lower() == 'name':
         val = str(input("Enter item name: "))
@@ -162,7 +168,7 @@ def enter_str_val(val_type):
             print("OS field cannot be empty.")
             return(enter_str_val(val_type))
         return val
-
+#Helper function to allow user to enter a numerical value. Input is verified to be a float or string and not negative or empty.
 def enter_numerical_val(val_type):
     if val_type.lower() == "price":
         try:
@@ -204,7 +210,7 @@ def enter_numerical_val(val_type):
         except ValueError:
             print("Screen size must be a floating point value.")
             return(enter_numerical_val(val_type))
-
+#Helper function to allow user to enter a datetime value. Input is verified to be a datetime object of the right format and not empty.
 def enter_datetime_val(val_type):
     if val_type.lower() == "expiry date":
         try:
@@ -222,7 +228,7 @@ def enter_datetime_val(val_type):
         except ValueError:
             print("Invalid date format, please try again")
             return(enter_datetime_val(val_type))
-
+#Helper function to verify a boolean value. Input is verified to be a boolean value and not empty.
 def enter_boolean_value(val_type):
     if val_type.lower() == "check gluten":
         try:
@@ -240,7 +246,7 @@ def enter_boolean_value(val_type):
         except ValueError as e:
             print(e)
             return(enter_boolean_value(val_type))
-
+#function to return boolean value from Y or N input
 def bool_yes_no(yn):
     if yn.lower() == "y" or yn.lower() == "yes":
         return True
@@ -248,7 +254,7 @@ def bool_yes_no(yn):
         return False
     else:
         raise ValueError("Invalid input, must be Yes/Y or No/N.")
-
+#Function to remove product from shopping cart by unieque ID, verifies that the ID is in the cart and not empty.
 def command_r(shopping_cart):
     if bool(shopping_cart.get_contents()) == False:
         print("\nNo items in shopping cart.")
@@ -263,7 +269,7 @@ def command_r(shopping_cart):
         else:
             print("\nInvalid product ID, please try again.")
             command_r(shopping_cart)
-
+#Command to display the contents of the shopping cart. Formatted to display items quantity, uniqueID, name, price and total price.
 def command_s(shopping_cart):
     print("Cart Summary:")
     if bool(shopping_cart.get_contents()) == True:
@@ -279,7 +285,7 @@ def command_s(shopping_cart):
         print("\tTotal Price = £" + str("{:.2f}".format(total_price)))
     else:
         print("\nShopping Cart is Empty.")
-
+#Function to changee the quantity of an item in the shopping cart. Changes don through unique ID and berifies that the ID is in the cart and not empty.
 def command_q(shopping_cart):
     if bool(shopping_cart.get_contents()) == False:
         print("\nNo items in shopping cart.")
@@ -291,7 +297,9 @@ def command_q(shopping_cart):
                         change_item_quant(shopping_cart, i, change_id)
         else:
             print("\nInvalid product ID, please double check and try again.")
-
+#Helper function to change the quantity of an item in the shopping cart. Verifies that the new quantity is an integer and not empty.
+#If the new quantity is 0, the item can be removed from the cart if the user accepts the prompt.
+#If the new quantity is the same as the current quantity, a message is shown to the user
 def change_item_quant(shopping_cart, item, change_id):
     og_quantity = str(item.quantity)
     print("\nCurrent number of this item in cart: " + og_quantity)
@@ -320,7 +328,7 @@ def change_item_quant(shopping_cart, item, change_id):
     except ValueError:
         print("Invalid input, input must be an interger. Please try again.")
         change_item_quant(shopping_cart, item, change_id)    
-     
+#Function to display the contents of the shopping cart. Formatted to display items in json format in the console.   
 def command_e(shopping_cart):
     if bool(shopping_cart.get_contents()) == False:
             print("\nNo items in shopping cart.")
@@ -337,7 +345,7 @@ def command_e(shopping_cart):
         shopping_cart_dict["total_price"]  = total_price
         shopping_cart_json = json.dumps(shopping_cart_dict, indent=1)
         print(shopping_cart_json)
-        
+#Command to show a list of possible commands the user can enter.       
 def command_h():
     print("The following commands are supported:")
     print("\t[A] - Add a new product to the cart")
@@ -347,7 +355,7 @@ def command_h():
     print("\t[E] - Export a JSON version of the cart")
     print("\t[T] - Terminate the program")
     print("\t[H] - See the list of supported commands")
-
+#Main function to run the program. Creates a shopping cart object and runs the command loop.
 def main():
     print("\nStarted! Type your next command or type 'H' to get a list of Available Commands")
     terminate = False

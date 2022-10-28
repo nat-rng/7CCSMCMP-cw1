@@ -4,6 +4,7 @@ class ListNode:
         self.__data = data
         self.__next = None
     
+    #Setter and getter methods to access attributes of the ListNode class
     def get_data(self):
         return self.__data
     
@@ -22,6 +23,7 @@ class LinkedList:
         self.__head = ListNode()
         self.__limit = None
 
+    #Setter and getter methods to access attributes of the LinkedList class
     def get_head(self):
         return self.__head
     
@@ -33,7 +35,8 @@ class LinkedList:
     
     def set_limit(self, limit):
         self.__limit = limit
-        
+    
+    #Methoods to verify LinkedLiist is empty or full relative to th eset limit   
     def is_empty(self):
         if self.__head is None:
             return True
@@ -43,6 +46,7 @@ class LinkedList:
         if self.__limit == self.length():
             return True
         return False
+    
     # Adds new node containing 'data' to the end of the linked list.
     def insert(self, data):
         if self.is_full():
@@ -69,10 +73,11 @@ class LinkedList:
             cur_node=cur_node.get_next()
             elems.append(cur_node.get_data())
         return elems
-    
+    ## __STR__ method to print string representation of the linked list
     def __str__(self):
         return str(self.traverse())
     
+    # Returns the first node with matching data where value matches the inout v'alue'.
     def search(self, value):
         # Initialize current to head
         current = self.__head
