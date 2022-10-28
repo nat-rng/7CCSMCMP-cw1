@@ -22,6 +22,7 @@ class Product():
         json_object = json.dumps(json_dict)
         return json_object
     
+    #Setteer and Getter methods to access attributes of the Product class
     def get_name(self):
         return self.__name
     
@@ -43,6 +44,7 @@ class Clothing(Product):
         self.__size = size
         self.__material = material
         
+    #Oterride the to_json method to include the size and material attributes
     def to_json(self):
         json_dict = {"name": self.__name, "price": self.__price, "quantity": self.__quantity, 
                      "unique_id": self.__unique_id, "brand": self.__brand, "size": self.__size,
@@ -59,7 +61,8 @@ class Food(Product):
         self.__expiry_date = expiry_date
         self.__gluten_free = gluten_free 
         self.__suitable_for_vegans = suitable_for_vegans
-        
+
+    #Override the to_json method to include the expiry_date, gluten_free and suitable_for_vegans attributes
     def to_json(self):
         json_dict = {"name": self.__name, "price": self.__price, "quantity": self.__quantity, 
                      "unique_id": self.__unique_id, "brand": self.__brand, "expiry_date": self.__expiry_date,
@@ -76,7 +79,8 @@ class MobilePhone(Product):
         self.__os = os
         self.__model_year = model_year
         self.__screen_size = screen_size
-        
+    
+    #Override the to_json method to include the os, model_year and screen_size attributes    
     def to_json(self):
         json_dict = {"name": self.__name, "price": self.__price, "quantity": self.__quantity, 
                      "unique_id": self.__unique_id, "brand": self.__brand, "os": self.__os, 
